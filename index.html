@@ -2,38 +2,66 @@
 <html lang="zh-Hant">
 <head>
   <meta charset="UTF-8">
-  <title>長照資料測試</title>
+  <title>長照系統（簡易版）</title>
 </head>
 <body>
 
+<h2>新增住民</h2>
+
+姓名：<input id="name"><br><br>
+年齡：<input id="age" type="number"><br><br>
+狀態：<input id="status"><br><br>
+
+<button onclick="addData()">新增</button>
+
+<hr>
+
 <h2>住民資料</h2>
-<div id="output">讀取中...</div>
+<div id="list">載入中...</div>
 
 <script>
-const apiUrl = "https://script.google.com/macros/s/AKfycbx71intzoAzNwddfAbA9GpdjAdk04aL8jw3y6kppyXLMvX-5pnojDmdcGO8a6ceW1V62g/exec";
+const apiUrl = "👉你的 /exec 網址";
 
-fetch(apiUrl)
-  .then(res => res.json())
-  .then(data => {
-    let html = "<table border='1' cellpadding='10'>";
-    html += "<tr><th>姓名</th><th>年齡</th><th>狀態</th></tr>";
+async function loadData() {
+  const res = await fetch(apiUrl);
+  const data = await res.json();
 
-    data.forEach(item => {
-      html += `
-        <tr>
-          <td>${item.姓名}</td>
-          <td>${item.年齡}</td>
-          <td>${item.狀態}</td>
-        </tr>
-      `;
-    });
+  let html = "<table border='1' cellpadding='10'>";
+  html += "<tr><th>姓名</th><th>年齡</th><th>狀態</th></tr>";
 
-    html += "</table>";
-    document.getElementById("output").innerHTML = html;
-  })
-  .catch(err => {
-    document.getElementById("output").innerText = "錯誤：" + err;
+  data.forEach(item => {
+    html += `
+      <tr>
+        <td>${item.姓名}</td>
+        <td>${item.年齡}</td>
+        <td>${item.狀態}</td>
+      </tr>
+    `;
   });
+
+  html += "</table>";
+  document.getElementById("list").innerHTML = html;
+}
+
+async function addData() {
+  const name = document.getElementById("name").value;
+  const age = document.getElementById("age").value;
+  const status = document.getElementById("status").value;
+
+  await fetch(apiUrl, {
+    method: "POST",
+    body: JSON.stringify({
+      姓名: name,
+      年齡: age,
+      狀態: status
+    })
+  });
+
+  alert("新增成功！");
+  loadData();
+}
+
+loadData();
 </script>
 
 </body>
